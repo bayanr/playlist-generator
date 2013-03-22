@@ -37,7 +37,7 @@ proxy = session.get_object('org.mpris.MediaPlayer2.rhythmbox', '/org/mpris/Media
 player = dbus.Interface(proxy, dbus_interface='org.mpris.MediaPlayer2.Player')
 properties_iface = dbus.Interface(proxy, dbus_interface='org.freedesktop.DBus.Properties')
 
-previous_timestamp=time.time()
+previous_timestamp=time.time()+properties_iface.Get('org.mpris.MediaPlayer2.Player', 'Position')/1000000
 
 metadata = properties_iface.Get('org.mpris.MediaPlayer2.Player', 'Metadata')
 
@@ -66,15 +66,18 @@ def property_change_handler(iface_name, changed_properties, invalidated_properti
 	global add_track
 
 	for key in changed_properties:
+		if key == 'PlaybackStatus':
+			status = changed_properties[key]
+			if status == 'Playing':
+				previous_timestamp = time.time()-properties_iface.Get('org.mpris.MediaPlayer2.Player', 'Position')/1000000
 		if key == 'Metadata':
-			if previous_timestamp <> 0:
-				track_length = metadata['mpris:length']
-				track_length = track_length/1000000
-				playback_length = time.time()-previous_timestamp
-				if playback_length >= 0.80*track_length:
-					add_track(metadata['xesam:title'], metadata['xesam:url'])
-				metadata = changed_properties[key]
-				previous_timestamp = time.time()
+			track_length = metadata['mpris:length']
+			track_length = track_length/1000000
+			playback_length = time.time()-previous_timestamp
+			if playback_length >= 0.80*track_length:
+				add_track(metadata['xesam:title'], metadata['xesam:url'])
+			metadata = changed_properties[key]
+			previous_timestamp = time.time()
 
 
 
