@@ -13,6 +13,8 @@ HOW TO USE
 5. just listen to your music, skip the songs you don't want and this program will do the rest :)
 6. Every time the list is updated, the file will be updated so just check the playlist name you gave it 
 
+The timer stops when you pause, and resumes when you hit play
+
 If you don't use rhythmbox, simply open the playlist-gen.py file, go to the line where it says org.mpris.Player.rhythmbox and change rhythmbox to whatever music player you want.
 
 I know for a fact, guayadeque, banshee and amarok work with this script.
